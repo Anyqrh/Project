@@ -1,0 +1,1180 @@
+
+
+
+#include<stdio.h>
+#include<stdlib.h>                                         
+#include<string.h>
+#include<conio.h>
+
+
+typedef struct Fun            
+{
+	int number;				 // 学号 
+	char name[12];           // 姓名 
+	char gender[2];          // 性别 
+	int age;                 // 年龄 
+	float china;             // 语文成绩 
+	float math;              // 数学成绩 
+	float english;			 // 英语成绩 
+	float sum;               // 总成绩 
+	struct Fun *next; 
+ }JGT;    
+
+extern void InterFace1(int count);                             // 显示主菜单1
+extern void InterFace2(int count);                             // 显示主菜单 2
+extern JGT *Delete(JGT *head, int number);                    // 删除学生信息
+extern JGT *Amend(JGT *head, int number, JGT *Student);       // 修改学生信息         
+ extern void Show(JGT *head);                               // 显示所有学生信息
+extern void NumberFind(JGT *j_p);                          // 按学号查找 
+extern void NameFind(JGT *j_p);                            // 按姓名查找
+extern void ChinaFind(JGT *j_p);                            // 按语文成绩查找 
+extern void MathFind(JGT *j_p);                             // 按数学成绩查询 
+extern void EnglishFind(JGT *j_p);                           // 按英语成绩查找
+extern void SumFind(JGT *j_p);                             // 按总成绩查找 
+extern void SumCompute(JGT *j_p);                         // 计算总成绩 
+extern JGT *Sort(JGT *head);                               // 排序函数 
+extern JGT *Read(JGT *head);                              // 读取数据
+extern void Save(JGT *head);                               // 保存数据  
+
+//添加学生信息
+
+JGT *Scanf(JGT *head)
+{
+	JGT *p;
+	int i, n, a;
+	JGT *j_Student = (JGT *) malloc(sizeof(JGT));
+	p = head;
+	 
+	// 输入第学号 
+	n = 0; 
+	do
+	{ 
+		if(++n != 1)   printf("\n输入错误，你输入的数字重复或者不在范围内，学号取值范围是1~999999\n"); 
+		printf("\n输入学号:\t");                 
+		scanf("%d", &j_Student->number);
+		while(p != NULL)
+		{
+			if(j_Student->number == p->number) 
+			j_Student->number = 0;
+			p = p->next; 
+		}
+		if(j_Student->number >= 1000000) j_Student->number = -1;
+
+	}while(j_Student->number <= 0);
+	
+	
+	n = 0; 
+	// 输入姓名
+	do
+	{ 
+		if(++n != 1) printf("输入错误，最多可输入3个字，重新输入\n"); 
+		else printf("\n输入姓名:\t");
+		scanf("%s", j_Student->name);
+	}while(strlen(j_Student->name) > 6);
+	
+	
+	// 输入性别 
+	n = 0;
+	do
+	{
+		if(++n != 1) printf("输入错误，只能输入'男'或'女'，重新输入\n"); 
+		else printf("\n输入性别:\t");
+		
+		scanf("%s", j_Student->gender);
+		getchar();
+		
+    }while(strcmp(j_Student->gender, "男") != 0 && strcmp(j_Student->gender, "女") != 0);
+    
+    
+	 n = 0;
+	// 输入年龄 
+	
+	do
+	{
+		if(++n != 1) printf("输入错误，年龄过大或不是数字，年龄的取值范围是1~200重新输入'\n"); 
+		else printf("\n输入年龄:\t");
+		scanf("%d", &j_Student->age);
+		
+		for(i = 1; i <= 200; i++)
+		{
+			if(j_Student->age == i) break;
+			if(j_Student->age != i && i == 200) 
+				j_Student->age = 1000;
+		}  
+		
+	}while(j_Student->age > 200);
+	
+	
+	n = 0;
+	// 输入语文成绩 
+	do
+	{
+		if(++n != 1) printf("输入错误，语文成绩的取值范围是0~150，重新输入'\n"); 
+		else printf("\n语文成绩:\t");
+		scanf("%f", &j_Student->china);
+		
+			
+		for(i = 1; i <= 150; i++)
+		{
+			if(j_Student->china == i) break;
+			if(j_Student->china != i && i == 150)
+				j_Student->china = 1000;
+		}  
+		
+	}while(j_Student->china > 150);
+	
+	
+	n = 0;
+	// 输入数学成绩 
+	do
+	{
+		if(++n != 1) printf("输入错误，数学成绩的取值范围是0~150，重新输入'\n"); 
+		else printf("\n数学成绩:\t");
+		scanf("%f", &j_Student->math);
+		
+			
+		for(i = 1; i <= 150; i++)
+		{
+			if(j_Student->math == i)   break;
+			if(j_Student->math != i && i == 150)   
+				j_Student->math = 1000;
+		}  
+		
+	}while(j_Student->math > 150); 
+	n = 0;
+	// 输入英语成绩 
+	do
+	{
+		if(++n != 1) printf("输入错误，英语成绩的取值范围是0~150，重新输入'\n"); 
+		printf("\n英语成绩:\t");
+		scanf("%f", &j_Student->english);
+				
+		for(i = 1; i <= 150; i++)
+		{
+			if(j_Student->english == i) break;
+			if(j_Student->english != i && i == 150)   
+				j_Student->english = 1000;
+		}  
+		
+	}while(j_Student->english > 150);
+	
+	
+	j_Student->next = NULL;
+	
+	return(j_Student);
+	system("cls"); 
+ }       
+
+//链表的删除 
+
+JGT *Delete(JGT * head, int number)
+{
+	JGT *h, *p;
+	if(head->number == number)
+	{
+		p = head;
+		head = head->next;
+	}
+	else
+	{
+		h = head;
+		p = h->next;
+		while(p != NULL && p->number != number)
+		{
+			h = p;
+			p = p->next;
+		 } 
+		 if(p->number == number)
+		 h->next = p->next;
+	}
+	free(p);
+	return(head);
+}
+
+
+//修改学生信息
+
+JGT *Amend(JGT *head, int number, JGT *j_Student)
+{
+	
+	JGT *p, *q;
+	int i = 1;
+	p = (JGT*)malloc(sizeof(JGT));
+	p = q = head;
+
+  
+	
+	
+	while(p != NULL)
+	{
+		if(i == 1 && p->number == number)
+		{
+		j_Student->next = p->next;
+		head = j_Student;
+		free(p);
+		return(head);
+	      }
+		
+		if(p->number == number && i != 1)
+		{
+			j_Student->next = p->next;
+			q->next = j_Student;
+			free(p);
+			return(head);
+		}
+		if(i++ != 1) q = q->next;
+		p = p->next;
+	}
+	printf("Amend函数出现问题\n"); 
+	return(head);
+}
+
+//按语文成绩查找对应的学生信息
+
+void ChinaFind(JGT *j_p)
+ {
+ 	void Show(JGT *j_p);
+	int low, high;
+	int i = 1;                                //判断次数 
+	JGT *q, *j_pq;
+	
+	printf("请输入要查找的语文成绩范围\n");
+	do
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入, 范围在0~150\n"); 
+			i = 0;
+		}
+		scanf("%d %d", &low, &high);
+	}while(low > high || low < 0 && high > 150);
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(q->china >= low && q->china <= high)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_pq);
+  } 
+
+
+  //按数学成绩查找对应的学生信息
+
+void MathFind(JGT *j_p) 
+ {
+ 	void Show(JGT *j_p);
+	int low, high;
+	int i = 1;                                //判断次数 
+	JGT *q, *j_pq;
+	
+	
+	printf("请输入要查找的数学成绩范围\n");
+	do
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入, 范围在0~150\n"); 
+			i = 0;
+		}
+		scanf("%d %d", &low, &high);
+	}while(low > high || low < 0 && high > 150);
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(q->math >= low && q->math <= high)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_pq);
+  }
+
+
+//按英语成绩查找对应的学生信息
+void EnglishFind(JGT *j_p)
+ {
+ 	void Show(JGT *j_p);                      // 调用Show函数，显示所查询的学生信息 
+	int low, high;
+	int i = 1;                                // 判断次数 
+	JGT *q, *j_pq;
+	
+	printf("请输入要查找的英语成绩范围\n");
+	do
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入, 范围在0~150\n"); 
+			i = 0;
+		}
+		scanf("%d %d", &low, &high);
+	}while(low > high || low < 0 && high > 150);
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(q->english >= low && q->english <= high)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_pq);
+  }
+
+
+//按学号查找对应的学生信息
+
+d NameFind(JGT *j_p)
+ {
+	void Show(JGT *j_p);
+	char name[12]; 
+	int i = 1;                                // 判断次数 
+	JGT *q, *j_pq;                            // JGT型指针j_pq 存储要查找的学生信息 
+	
+	printf("\n请输入要查找的姓名\n");
+	do 
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入,限定姓名最多三个字\n"); 
+			i = 0;
+		}
+		scanf("%s", &name);
+	}while(strlen(name) > 6);               //限定姓名最多只能三个字 
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(strcmp(j_p->name, name) == 0)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_pq);
+ }
+
+
+
+//按学号查找对应的学生信息
+
+NumberFind(JGT *j_p)
+{
+	void Show(JGT *j_p);
+	int low, high;
+	int i = 1;                                //判断次数 
+	JGT *q, *j_pq;
+	
+	
+	printf("\n请输入要查找的学号范围\n");
+	do
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入\n"); 
+			i = 0;
+		}
+		scanf("%d %d", &low, &high);
+	}while(low > high);
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(q->number >= low && q->number <= high)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_p);
+}
+
+
+
+//按总成绩查找对应的学生信息
+
+void SumFind(JGT *j_p)
+ {
+ 	void Show(JGT *j_p);
+	int low, high;
+	int i = 1;                                //判断次数 
+	JGT *q, *j_pq;
+	
+	printf("\n请输入要查找的总成绩成绩范围\n");
+	do
+	{
+		if(i != 1)     
+		{
+			printf("输入错误,请重新输入, 范围在0~150\n"); 
+			i = 0;
+		}
+		scanf("%d %d", &low, &high);
+	}while(low > high || low < 0 && high > 150);
+	
+	q = j_p;
+	
+	i = 1;
+	while(q != NULL)
+	{
+		if(q->sum >= low && q->sum <= high)
+		{
+			if(i == 1)
+				j_pq = q;
+			else
+			{
+				j_pq->next = q;
+				j_pq = j_pq->next;
+			}
+		}
+		q = q->next;
+	}
+	j_pq->next = NULL;
+	Show(j_pq);
+ }
+
+
+
+//显示学生所有学生信息
+
+void Show(JGT *head)
+ {
+ 	
+ 	printf("%s", HEADER1);
+ 	printf("%s", HEADER2);
+ 	printf("%s", HEADER1);
+ 	
+ 	JGT *j_p;
+ 	j_p = (JGT *)malloc(sizeof(JGT));
+	j_p = head; 
+ 	
+ 	while(j_p != NULL)
+ 	{
+ 		printf(HEADER4, DATA);
+ 		printf("\n");
+ 		j_p = j_p->next;
+ 	}
+ }
+
+
+
+//对链表中的元素进行排序（冒泡法）
+
+JGT *Sort(JGT *head)
+ {
+ 	
+ 	JGT *temp, *p, *q;
+ 	p = q = temp = (JGT*)malloc(sizeof(JGT));
+ 	int i, n = 1, j;
+ 	 
+ 	while(n < count)
+ 	{
+ 	
+ 		i = 1;
+ 		j = 1;
+ 		for(p = head, q = p->next, temp = head; j < count - n + 1; p = p->next, q = q->next)
+ 		{
+ 	
+ 			if(p->number > q->number && i != 1)
+ 			{
+ 			  if(p == head)
+ 				{
+ 				    
+ 				    p->next = q->next;
+ 				    q->next = p;
+ 				    temp->next = q;
+ 				   
+				 }
+				else
+				{
+					
+ 					
+ 					p->next = q->next;
+ 				    q->next = p;
+ 				    temp->next = q;
+ 				   
+				}
+			 }
+			if(p->number > q->number && i == 1)
+			{
+				if(p == head)
+				{
+					p->next = q->next;
+				    q->next = p;
+				    head = q;
+				   
+				}
+				else
+				{
+					p->next = q->next;
+					q->next = p;
+				
+				}
+			}
+			if(i++ != 1) temp = temp->next;
+			
+			j++;
+		 }
+		 n++;
+	}
+	 
+	 return(head);
+ }
+
+
+
+//主菜单界面显示
+
+void InterFace1(int count)
+{
+	int i, j;
+	
+	
+	printf("\n ");
+	for(i = 0; i < 10; i++)
+		printf("*");
+	printf("欢迎使用学生管理系统（当前共有%d名学生）", count);
+	for(i = 0; i < 10; i++)
+		printf("*");
+	printf("\n");
+		
+	
+	for(i = 1; i <= 61; i++)
+	{
+		if(i == 1 || i == 61)        printf("*");
+		else printf(" ");
+	} 
+	printf("\n");
+	
+		 
+	for(i = 1; i <= 61; i++)
+	{
+	if(i == 1 || i == 61)        printf("*");
+	else if(i >= 20 && i <= 40)  printf("-");
+	else printf(" "); 
+	} 
+	printf("\n");
+	
+		  
+	printf("*");
+	for(i = 1; i <= 18; i++)
+		printf(" ");
+	printf("|");
+	printf("   开发者：邱荣华  ");
+    printf("|");
+	for(i = 1; i <= 20; i++)
+	printf(" ");
+	printf("*");
+	printf("\n");
+	
+		
+	for(i = 1; i <= 61; i++)
+	{
+		if(i == 1 || i == 61)        printf("*");
+		else if(i >= 20 && i <= 40)  printf("-");
+		else printf(" "); 
+	} 
+	printf("\n");
+	
+	
+	for(i = 1; i <= 61; i++)
+	{
+		if(i == 1 || i == 61)        printf("*");
+		else printf(" ");
+	} 
+	printf("\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(1)添加学生信息");
+	for(i = 1; i < 28; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(2)删除学生信息(根据学号)");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(3)修改学生信息(根据学号)");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(4)查询学生信息");
+	for(i = 1; i < 28; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(5)显示所有学生信息及统计信息");
+	for(i = 1; i < 14; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	printf("*");
+	for(i = 1; i < 18; i++)
+		printf(" ");
+	printf("(0)退出软件");
+	for(i = 1; i < 32; i++)
+		printf(" ");
+	printf("*\n");
+	
+	
+	for(i = 1; i < 62; i++)
+	{
+		if(i == 1 || i == 61) printf("*");
+		else  printf(" ");
+	}
+	printf("\n");
+	
+	
+	for(i = 0; i < 61; i++)
+	{
+		if(i == 0 || i == 60)  printf(" ");
+		else printf("*");
+	}
+	
+	return 0;
+	system("cls");
+}
+
+
+
+//界面显示2
+
+void InterFace2(int count)
+{
+	int i, j, n = 0;
+	
+	// 
+	system("cls");
+	printf("\n");
+	printf(" ");
+	for(i = 0; i < 15; i++)
+		printf("*");
+	printf("查询学生信息(当前共有%d名学生)", count); 
+	for(i = 0; i < 15; i++)
+		printf("*");
+	printf("\n");
+		
+	//
+	for(i = 1; i <= 61; i++)
+	{
+		if(i == 1 || i == 61)        printf("*");
+		else printf(" ");
+	} 
+	printf("\n");
+	
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(1)根据学号查询");
+	for(i = 1; i < 30; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(2)根据姓名查询");
+	for(i = 1; i < 30; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(3)根据语文成绩查询");
+	for(i = 1; i < 26; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(4)根据数学成绩查询");
+	for(i = 1; i < 26; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(5)根据英语成绩查询");
+	for(i = 1; i < 26; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(6)根据总成绩查询");
+	for(i = 1; i < 28; i++)
+		printf(" ");
+	printf("*\n");
+	 
+	
+	//
+	printf("*");
+	for(i = 1; i < 16; i++)
+		printf(" ");
+	printf("(0)返回主菜单");
+	for(i = 1; i < 32; i++)
+		printf(" ");
+	printf("*\n");
+	
+	//
+	for(i = 1; i < 62; i++)
+	{
+		if(i == 1 || i == 61) printf("*");
+		else  printf(" ");
+	}
+	printf("\n");
+	
+	//
+	for(i = 0; i < 61; i++)
+	{
+		if(i == 0 || i == 60)  printf(" ");
+		else printf("*");
+	}
+	
+}
+
+
+
+//保存记录
+
+id Save(JGT *head)
+ {	
+ 	FILE *fp;
+ 	JGT *p;
+ 	p = head;
+	int i = 0;
+	fp = fopen("fun.txt", "wb+");
+	if(fp == NULL)
+	{
+		printf("\打开文件出错!\n");
+	 	getchar();
+	 	return ;
+	} 
+	for(i = 0; i < count; i++)
+	{
+		if(fwrite(p, sizeof(JGT), 1, fp) == 1)
+		{
+			p = p->next;
+			continue;
+		}
+		else 
+		{
+			printf("保存出问题\n");
+			getchar(); 
+			break;
+		}
+		p = p->next;
+	}
+	if(i > 0)
+	{
+		getchar();
+		printf("\n====>保存文件完成，总保存的记录被保存!\n");
+		getchar();
+	
+	}
+	else 
+	{
+		system("cls");
+		printf("当前链接为空。没有保存员工记录!\n");
+		getchar();
+	}
+	fclose(fp);
+ }
+  
+
+
+//读取记录
+
+*Read(JGT *head)
+ {
+ 	
+ 	FILE *fp;
+ 	JGT *p, *h, *q;
+ 	p = h = (JGT *)malloc(sizeof(JGT));
+ 	
+	
+	
+	fp = fopen("fun.txt", "rb+");
+	
+	
+	if(fp == NULL)
+	{
+		printf("\n=====>不能打开文件\n");
+		return(NULL);
+	}
+
+	
+	
+	int n = 1;
+	while(!feof(fp))
+	{
+		
+		
+		
+		if(fread(p, sizeof(JGT), 1, fp) == 1)
+		{
+			if(n == 1)
+			{
+				h = p;
+				q = p;
+				printf("没问题\n");
+				//getchar(); 
+				
+			}
+			
+			else if(n == 2)
+			{
+				h->next = p;
+				q = p;
+				printf("没问题\n");
+				getchar(); 
+			
+			}
+		
+			else
+			{
+				q->next = p;
+				q = p;
+			    printf("没问题\n");
+				getchar();
+			}
+			
+			
+		}
+		else
+		{
+			printf("读取出错\n");
+			getchar();
+			exit(0);	
+		}
+		
+		p = (JGT*)malloc(sizeof(JGT));
+		count++;
+		n++;
+			
+	}
+	
+	
+	p = NULL;
+	q->next = p;
+	count--;
+
+    head = h;
+    
+	fclose(fp);
+	return(head);
+ }
+
+
+//main函数
+
+int main()
+ {
+ 	
+ 	FILE *fp;                                            // 文件指针          
+ 	JGT *head, *j_p;                                // head 是main函数中的头指针， 
+ 	JGT *c;
+ 	head = j_p = (JGT *)malloc(sizeof(JGT));
+ 	head = NULL;
+ 	//int count = 0;                                       //count 为计数器   统计输入了几个学生的信息 
+ 	int number, b;
+ 	int n, m, x;                                  // x 判断是否存储记录 
+ 	
+
+ 	
+ 	
+ 	// 文件区 
+ 	////////////////////////////////////////
+	printf("是否读取上次的纪录，是请按1\n");
+	x = (int)getch();
+	if(x == '1')
+	{
+		head = Read(head);
+	}
+    
+	 k = count;
+ 	//////////////////////////////////////
+ 	// InterFace1(count);       // 界面函数 
+ 	do
+ 	{
+ 		
+ 		InterFace1(count);
+ 		n = (int)getch();
+ 		if(n == '1')  
+ 		{
+ 			
+ 			if(k == 0)
+ 			{
+	    		head = j_p = Scanf(head);
+	    		j_p->next = NULL;
+	    		
+	    	}
+	
+
+	    	if(k++ != 0) 
+	    	{
+	    		while(j_p->next != NULL)
+	    		{
+	    			j_p = j_p->next;
+				}
+				if(j_p->next == NULL)
+				j_p->next = Scanf(head);
+				j_p = j_p->next;
+				j_p->next = NULL;	
+	        }
+	        
+	        count++;
+	        if(count != 1)
+	        head = Sort(head);                      
+	    	SumCompute(head);                                 
+	    	InterFace1(count);
+	    	
+     	}
+     	
+     	if(n == '2')  
+     	{
+     		printf("\n输入需要删除的信息的学号:\n");
+     		scanf("%d", &number);
+     		int t = 0;
+     		do
+     		{
+     			c = head;
+     			while(c != NULL)
+     			{
+     				if(number != c->number)
+     				{
+     					printf("没有找到该学号,请重新输入\n");
+     					scanf("%d",&number);
+     					t = 1;
+						break; 
+					}
+					else 
+						{
+							t = 0;
+							break;
+						}
+				 	c = c->next;
+				}
+				
+			}while(t);
+			
+			if(head == NULL)
+			{
+				int n;
+				printf("当前没有学生信息\n");
+				printf("退出请按1\n"); 
+				n = (int)getch();
+				if(n == '1')
+				{
+					system("cls");
+					continue;
+				}
+			}
+			 
+     		// system("cls");                                   //清楚缓存 
+     		printf("是否确定删除,是按1，否则按其他任意键\n"); 
+     		m = (int)getch();
+     		
+     		if(m == '1')
+     		{
+     			count--;
+     			k = count;
+     	    	head = Delete(head, number);
+     	    }
+     	    
+              
+		 }
+		 
+		 if(n == '3')
+		 {
+		 	printf("\n输入需要修改的信息的学号:\n");
+			scanf("%d", &number);
+			
+			int t = 0;
+     		do
+     		{
+     			c = head; 
+     			
+     			while(c != NULL)
+     			{
+     				if(number != c->number)
+     				{
+     				//	printf("没有找到该学号,请重新输入\n");
+     				//	scanf("%d",&number);
+     					t = 1;
+						break; 
+					}
+					else 
+						{
+							t = 0;
+							break;
+						}
+				 	c = c->next;
+				}
+				if(t == 1) 
+				{
+					printf("没有找到该学号,请重新输入\n");
+					scanf("%d",&number);
+				}
+				
+			}while(t);
+			
+			if(head == NULL)
+			{
+				int n;
+				printf("当前没有学生信息\n");
+				printf("退出请按1\n"); 
+				n = (int)getch();
+				if(n == '1')
+				{
+					system("cls");
+					continue;
+				}
+			}
+			
+			else{
+					head = Amend(head, number, Scanf(head)); 
+					head = Sort(head); 
+		 		}
+		 		
+		 }
+		 
+		 if(n == '4')
+		 {
+		 	InterFace2(count);
+		 	
+		 	while(1)
+		 	{
+		 		m = (int) getch();
+		 		
+		 		switch(m)
+			 	{
+		 			case '1':  NumberFind(head); break;
+		 		
+		 			case '2':  NameFind(head);   break;
+		 		
+		 			case '3':  ChinaFind(head);  break;
+		 		
+		 			case '4':  MathFind(head);   break; 
+		 	
+		 			case '5':  EnglishFind(head);break;
+		 		
+		 			case '6':  SumFind(head);    break;
+		 		
+		 			case '0':  system("cls");   break;                                               
+		        }
+		        if(m == '0') break;
+		
+	        }
+		
+		 }
+		 system("cls");
+		 
+		 if(n == '5')
+		 {
+		 	if(head == NULL)
+		 		printf("\n当前没有学生信息\n");
+			else 	  
+		 	Show(head);
+		 } 
+		 
+		 
+		 
+		 
+    }while(n != '0');
+    
+    printf("\n是否存储记录，是请按1,否则按任意键\n"); 
+    x = (int)getch();
+    if(x == '1') 
+    {
+    	Save(head);
+	}
+	
+    
+    system("pause");
+    return 0;
+ }
+         
